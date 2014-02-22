@@ -79,11 +79,8 @@ $(document).ready(function() {
 });//end ready
 
  
-function openModalDialog(id){ $(id).dialog(open); }
-function closeModalDialog(id){
-	if(testing){console.log('BBf in function closeModalDialog');}
-	$(id).dialog('close');
-}
+function openModalDialog(id){  $(id).dialog(open); }
+function closeModalDialog(id){ $(id).dialog('close');}
 
 function checkSubmit(e){
 	//alert('in checkSubmit');

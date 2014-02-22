@@ -1,6 +1,6 @@
  
-	if (typeof console == "undefined" || typeof console.log == "undefined") var console = { log: function() {} };  
-	var testing = true;
+if (typeof console == "undefined" || typeof console.log == "undefined") var console = { log: function() {} };  
+var testing = true;
  
 var sSession; //this is just the quiz number without a letter prefix. 
 //objectiveID has the letter prefix.
@@ -69,17 +69,19 @@ function prevPage(pageIndex){
 	ns.localStorage.set('znThisPage', newPage);
 	 document.location.href = "index.htm?itm="+newPage;
 }		
-//*****************Quizzing functions specific to perception quizzes. Functions that pertain to all quizzes are in quizFunctions.js *************//		
+//*****************Quizzing functions specific to Qualtrics quizzes. Functions that pertain to all quizzes are in quizFunctions.js *************//		
 
 function MarkObjectiveDone(objectiveID){//send quiz score data to the LMS
-	if(testing){console.log('XPJT in MarkObjectiveDone: objectiveID+= '+objectiveID+', pscore'+pScore+', pMax='+pMax+', apiok='+APIOK())}
+	if(testing){console.log('XPJT in MarkObjectiveDone: objectiveID+= '+objectiveID+', pscore'+pScore+', apiok='+APIOK())} 
 	var ct = SCOGetValue("cmi.objectives._count");
-	var checkdata = SCOGetObjectiveData(objectiveID, "status");
-	if(testing){console.log('GGGT in MarkObjectiveDone: checkdata = '+ checkdata+ 'cmi.objectives._count='+ct);}
+	var pMax=ps[znThisPage].qmax; //qualtrics doesn't provide max so we must get it from page array
+	var pPercent = parseInt((pScore/pMax)*100,10);
 	SCOSetObjectiveData(objectiveID, "status", "completed");
 	SCOSetObjectiveData(objectiveID, "score.raw", pScore.toString());
 	SCOSetObjectiveData(objectiveID, "score.max", pMax.toString());
 	SCOCommit();	 	
+	var checkdata = SCOGetObjectiveData(objectiveID, "status");
+	if(testing){console.log('GGGT in MarkObjectiveDone: checkdata = '+ checkdata+ 'cmi.objectives._count='+ct);}
 	}  //end MarkObjectiveDone
   
 
@@ -92,7 +94,7 @@ function quizFinish() {
     $("#finishedDiv").html('<div class="alert alert-block">One moment please... sending information to MLearning for safekeeping</div>');
 	//console.trace();
     sSession = ps[znThisPage].quiz;          
-	objectiveID=('Q'+sSession);
+	objectiveID=('U'+sSession);
 	
 	if(testing){console.log('FFR sSession='+sSession)}
 	MarkObjectiveDone(objectiveID);	

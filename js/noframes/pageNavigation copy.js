@@ -22,8 +22,8 @@
 			if(testing){console.log('XET decode64(quizSt)= '+decode64(quizStats))}
 			pScore = decode64(quizStats).split('&')[0];
 			pScore = pScore.split('=')[1];
-			pMax = 	typeof decode64(quizStats).split('&')[1] !="undefined" ? decode64(quizStats).split('&')[1]:null;//check this index in other versions
-			if(pMax!=null){ pMax = pMax.split('=')[1] };
+			pMax = 	decode64(quizStats).split('&')[1];//check this index in other versions
+			pMax = pMax.split('=')[1];
 			if(testing){console.log('AAG pScore='+pScore+',pMax='+pMax);}
 		}
 		//znThisPage is a number, the index of a page in the Array
@@ -96,9 +96,13 @@
 		justOpened=false;
 	}//end else	
 	
+	//if(testing){console.log('JJKE ms[doctitle]='+ms['docTitle'])}
+	
+	
 function printNavBar(){
 	var urls='',urlStr='', str1; 	 
 	ps = ns.localStorage.get('pageArray');//pulls current state of page array from local storage
+	// console.log('SWE ls ='+ ps); 
 	znPages = ps.length;
 	str1= ('<div class="nav-collapse sidebar-nav">\n<ul class="nav nav-tabs nav-stacked main-menu">');	
 	if(testing){console.log('in printNavBar APB ns.localStorage.isEmpty()='+ns.localStorage.isEmpty('pageArray') )}         
@@ -108,9 +112,13 @@ function printNavBar(){
 	determineParents(); // processes parent child relationships for use with navbar
 
 	 for(var i=0; i< ps.length; i++) {		 
-		var x=znThisPage-1;		 	 
-		var p = ps[i], j = (i+1), k = (i-1);
-		var nextItem = ps[j], prevItem = ps[k];				
+		var x=znThisPage-1;	
+	 	//console.log('in printNavBar APD '+ns.localStorage.get('pageArray')[0]);
+		var p = ps[i];
+		var j = (i+1);
+		var k = (i-1);
+		var nextItem = ps[j];
+		var prevItem = ps[k];				
 		var level =   		p.level;
 		if(level > 1){showExpander ='block'}
 		var isquiz = 	   (p.quiz)?'quiz':'notquiz';
@@ -128,6 +136,7 @@ function printNavBar(){
 		//if (i==x){ current = 'current';expand='open2'; }
 		if(typeof znThisPage=="undefined"){znThisPage=ps[0]}
 		if (i==znThisPage){ current = 'active';expand='open'; }
+		//console.log('i='+i+', znThisPage= '+znThisPage+', level= '+level+'ps[znThisPage].level= '+ps[znThisPage].level+', chapter= '+chapter+', branch= ' +branch);
 		if (level==1){expand='open';}
 		else if (ps[znThisPage].level>level&&ps[znThisPage].chapter==chapter &&ps[znThisPage].branch==branch){expand='open';} 	  //if currentPage is a direct child of i
 		else if (ps[znThisPage].branch==branch && (ps[znThisPage].level==level||level==parseFloat(ps[znThisPage].level+1))){expand='open';} 	  //current page on same level And in same branch
@@ -191,7 +200,7 @@ function printNavBar(){
 function getCurrentPage(){ 	 
 		//if pItem is not undefined, use it to determine which page number of the array to go to. It means you are using a deep link or perhaps coming back from a quiz.
 		if ((typeof pItem != "undefined")&&(pItem != null)) {
-			
+			     //if(testing){console.log('UUV pItem ='+ pItem+ 'typeof pItem = '+typeof pItem +' znThisPage='+znThisPage)}	
 			 ns.localStorage.set('znThisPage', pItem);
 			document.location.href = "index.htm?ls=1";	 
 		 }
@@ -234,6 +243,7 @@ function getIndexOfDeepLink(dl){
     		return result;
 }//end function getIndexOfDeepLink
 
+
 //http://stackoverflow.com/questions/8809425/search-multi-dimensional-array-javascript
 //http://stackoverflow.com/questions/5181493/how-to-find-a-value-in-a-multidimensional-object-array-in-javascript		
 
@@ -248,10 +258,14 @@ function getContent(params){
 			if(dl=="index.htm"){itm = 0}
 			else{
 				itm = getIndexOfDeepLink(dl);
+
+				//if(testing){console.log('SEW in getContent dl= '+dl+', itm=getIndexOfDeepLink(dl)= '+getIndexOfDeepLink(dl))}
 			} //end else
 		}//end if if(dl=="index.htm")
 	}//end if(!itm)
-	 
+	//console.log('itm='+itm);
+ 
+	
 	
 	ns.localStorage.set('znThisPage', itm);//immediately store it in local storage
 	
@@ -265,93 +279,49 @@ function getContent(params){
 	var itmscore 		=	pi.score;
 	var itmmax 			=	pi.max; 
 	var itmcountscore 	=	pi.countscore;
-	var objectiveID		=   itmtype+itmquiz;
-	
-			if(testing){console.log("in getContent:BAA typeof itmquiz=="+typeof itmquiz+' '+itmquiz+ ' itmtype='+itmtype+', itmquiz= '+itmquiz)}
-			customFunction01();
-			//determine "is it a quiz" then is it a remote quiz or not and what to do with it. 
-				if(typeof itmquiz!="undefined"){ 		  	
-				   		  	
-						
-					//if it is a questionmark quiz that has not yet been taken
-					if(APIOK()){ var sScore  =   (typeof SCOGetObjectiveData(objectiveID, "score.raw")!="undefined")?(SCOGetObjectiveData(objectiveID, "score.raw")):itmscore;  }
-					else{ var sScore = (typeof itmscore!="undefined")?itmscore:null;  }
+	 
+	if(testing){console.log("in getContent:BAA typeof itmquiz=="+typeof itmquiz+' '+itmquiz+ ' itmtype='+itmtype+', itmquiz= '+itmquiz)}
+ 	customFunction01();
+ 	//determine "is it a quiz" then is it a remote quiz or not and what to do with it. 
+		if(typeof itmquiz!="undefined"){ 		  	
+		  //	if(testing){console.log("in getContent:BBB typeof itmquiz=="+typeof itmquiz+' '+itmquiz+ ' itmtype='+itmtype);}		  	
+		  	 		  	
+		  	//if it is a questionmark quiz that has not yet been taken
+		  	 if((itmtype=="Q")||(typeof itmtype=="undefined")){
+		  		//if(testing){console.log("in getContent:DDD")} 
+				 
+				params={	
+						quiz:itmquiz,
+						type: (typeof itmtype=="undefined"? "Q": itmtype),
+						qindex:itm
+			  			}//end p
+				quizStart(params); 
+				}//end  if((itmtype=="Q")||(itmtype=="undefined")
+			else if (itmtype=="U"){}//to be filled in later	
+			else if(itmtype=="I"){				
+				var ts = Math.round(new Date().getTime() / 1000);
+				 $('#content div#div6').load(itmurl+'?ts='+ts+' #content > *', function() {	
+					 if(testing){console.log("in getContent:DDD")} 				 	
+					//znThisPage = ns.localStorage.get('znThisPage');
+					$("#sidebar-left li a[id^='itm']").css("background-color","");
+					$("#sidebar-left li a#itm"+itm).css("background-color","orange");
+					znNextPage = parseFloat(znThisPage)+1;
+					znPrevPage = parseFloat(znThisPage)-1;	
+					wipePageNo();
+					wipeNavBar();
+					printNavBar();
 					
-					
-					if((itmtype=="Q")||(typeof itmtype=="undefined")){
-						 
-				 		
-						params={	
-								sScore:parseFloat(sScore),
-								quiz:itmquiz,
-								type: (typeof itmtype=="undefined"? "Q": itmtype),
-								qindex:itm
-								}//end params={
-						if (sScore == null || isNaN(parseFloat(sScore)) || typeof sScore =="undefined") {
-							quizStart(params); 
-							}//end if (sScore == null ||sScore 
-						else showTryAgainMsg(params);
-						}//end  if((itmtype=="Q")||(itmtype=="undefined")
-					else if (itmtype=="U"){
-							params={
-								sScore:parseFloat(sScore),
-								qurl:itmurl,
-								quiz:itmquiz,
-								type: "U",
-								qindex:itm
-								}//end params=
-								 
-							if (sScore == null || isNaN(parseFloat(sScore)) || typeof sScore =="undefined") {
-					
-							quizStart(params); 	
-						}//end if (sScore == nul
-						else showTryAgainMsg(params);
-					}	//end 	else if (itmtype=="U")										
-					else if(itmtype=="I"){				
-						var ts = Math.round(new Date().getTime() / 1000);
-						 $('#content div#div6').load(itmurl+'?ts='+ts+' #content > *', function() {	
-							 if(testing){console.log("in getContent:DDD")} 				 	
-							 
-							$("#sidebar-left li a[id^='itm']").css("background-color","");
-							$("#sidebar-left li a#itm"+itm).css("background-color","orange");
-							znNextPage = parseFloat(znThisPage)+1;
-							znPrevPage = parseFloat(znThisPage)-1;	
-							wipePageNo();
-							wipeNavBar();
-							printNavBar();
-					
-							changeLinks(setUpInteractions);//setUpInteractions is the callback function after changeLinks is finished
-							scormDivToggle();
-							checkDataAttr();
-							writeFlash();
-							writeKalturaPlayer();
-						});  //end anon function
-					}//end else if(itmtype=="I")
-					else if(itmtype=="C"){
-						var captype = (itmurl.indexOf('captivate6Wrap')!=-1)?"C6":"C"
-						params={
-								sScore:parseFloat(sScore),
-								qurl:itmurl,
-								quiz:itmquiz,
-								type: captype,
-								qindex:itm
-								}//end params	
-							if (sScore == null || isNaN(parseFloat(sScore)) || typeof sScore =="undefined") {
-								quizStart(params); 
-								znNextPage = parseFloat(znThisPage)+1;
-								znPrevPage = parseFloat(znThisPage)-1;	
-								wipePageNo();
-								wipeNavBar();
-								printNavBar();
-								changeLinks(setUpInteractions);//setUpInteractions is the callback function after changeLinks is finished
-								scormDivToggle();
-								checkDataAttr();
-								writeFlash();
-								writeKalturaPlayer()	
-							}//end if (sScore == nul
-							else showTryAgainMsg(params);
-					}//C or c6					
-				}//end if(typeof itmquiz!="undefined" 	
+					changeLinks(setUpInteractions);//setUpInteractions is the callback function after changeLinks is finished
+ 					scormDivToggle();
+ 					checkDataAttr();
+ 					writeFlash();
+					writeKalturaPlayer();
+				});  //end anon function
+			}//end else if(itmtype=="I")
+			else if(itmtype=="C"){}//to be filled in later
+			else if(itmtype=="C6"){}//to be filled in later
+			
+		}//end if(typeof itmquiz!="undefined" 	
  	
  	
  		//OR its not a quiz, so load the content into this page 		
@@ -363,7 +333,10 @@ function getContent(params){
 							//znThisPage = parseFloat(itm);//defined above
 							znNextPage = parseFloat(znThisPage)+1;
 							znPrevPage = parseFloat(znThisPage)-1;	
-							wipePageNo();					  							 
+							wipePageNo();
+							  
+							//if(testing){console.log('GFG clicked '+itm+', itm='+itm+', itmquiz= '+itmquiz+', itmtype='+itmtype+',loaded itmurl='+itmurl+', znThisPage= '+znThisPage+', znNextPage='+znNextPage+', znPrevPage='+znPrevPage);}	
+							
 							if(itmurl == "scorePage.htm"){ 		
 								scoreQuizzes();
 								$(".gothereLink,.tryagainLink").click(function(){	//bind the correctly setup getContent to each of the go there now buttons
@@ -378,7 +351,17 @@ function getContent(params){
 							checkDataAttr();
 							writeFlash();
 							writeKalturaPlayer();
-							scormDivToggle();							
+							 scormDivToggle();
+						/*	if($("div[id^='kaltura_player_']").length>0){
+							 	$.each( $("div[id^='kaltura_player_']"), function(){							 		 
+							 	var playernum =  this.id.substring(15);
+							 	$(this).append('<h2>Please wait a moment while player loads</h2><img src="images/img/ajax-loader.gif"/>'); //loading image
+							 	$(this).append('<script src="https://cdnapisec.kaltura.com/p/1038472/sp/103847200/embedIframeJs/uiconf_id/20100682/partner_id/1038472?autoembed=true&playerId=kaltura_player_'+playernum+'&cache_st='+playernum+'&width=400&height=680&flashvars[playlistAPI.kpl0Id]=1_hodzk5v2"></script>');
+							 	});							 	
+							} */
+						
+							
+							
 							customFunction03();	
 							customFunction04();								 
 							wipeNavBar();
@@ -395,28 +378,7 @@ function getContent(params){
 	
 }	//end function getContent	
 
-function showTryAgainMsg(params){	
-			 	
-			var msg=('You already have a score of '+params.sScore+' for this quizlet. ');
-			msg+=('<p>If you wish to take this quiz again and lose the existing score, click the button below</p>');			 
-			msg+=('<button class="btn btn-large btn-success" id="gtryagainbtn" alt=\"Erase my score and let me try again\">Try Again</button>');
-			msg+=('<button class="btn btn-large btn-danger" style="display:inline-box;margin-left:10px;" alt=\"Keep existing score, go to next page\" onclick=\"nextPage('+params.qindex+');closeModalDialog(\'#dialog-modal\')\">Skip This Quiz</button>');
- 			msg+=('<p style=\"clear:both;margin-top:10px;\">This module can not be marked "Complete" until all quizlets have been attempted at least once, AND the "Send Score to MLearning" button is clicked on the <a id=\"\">Score and Status page</a>. Quizzes may be taken multiple times.</p>');
- 			$("#dialog-modal").html(msg);
- 			//http://stackoverflow.com/questions/13520139/jquery-ui-dialog-cannot-call-methods-on-dialog-prior-to-initialization?rq=1
- 			var tryagaindialog = $( "#dialog-modal" ).dialog({
-    			close:true,
-            	height: 365,
-            	width:330,
-           		modal: true
-       	 		});//$( "#dialog-modal" )     
- 			//$(tryagaindialog).html(msg);
- 		 	 openModalDialog(tryagaindialog);
- 		 	$("#gtryagainbtn").click(function(){
- 		 	 	quizStart(params);
- 		 		$(tryagaindialog).dialog('close');
- 		 	})
-}
+
 function checkDataAttr(){
 	if( $('[data-script]').length>0 ){
 		$.each($('[data-script]'), function() {
@@ -426,6 +388,7 @@ function checkDataAttr(){
 		});	//end each
 	}//end if
 }//end function
+
 function writeFlash(){
 	if( $('#content div#div6 noscript').length ){ //check it for flash. 
 		if(IE(8)){ $('#content div#div6 noscript').before( $('#content div#div6 noscript').html() );}
@@ -435,6 +398,11 @@ function writeFlash(){
 			var html = $.parseHTML(  $('#content div#div6 noscript').text() );
 			$('#content div#div6 noscript').before( html ); 
 		}//end else
+		
+		//$('#content div#div6 noscript').before( $('#content div#div6 noscript').html() ); 
+		//if(IE(10)){ $('#content div#div6 noscript').before( $('#content div#div6 noscript').text() ); }
+		//else{$('#content div#div6 noscript').before( $('#content div#div6 noscript').html() ); }//add back in the object and embed tags.
+	
 	}	//end  if							
 }
 function writeKalturaPlayer(){
@@ -446,6 +414,7 @@ function writeKalturaPlayer(){
 		});							 	
 	} //end if
 }//end function writeKalturaPlayer
+
 function scormDivToggle(){
 	if(trackingmode == "scorm" && APIOK()){
 		if( $('#yesAPI').length ){$('#yesAPI').show();}
@@ -463,6 +432,7 @@ function customFunction01(){}
 function customFunction02(){}//functions that can be redefined in userScripts.js
 function customFunction03(){}
 function customFunction04(){}
+
 function changeLinks(callback){
 	//change all local links to "itm=" ajax links
 	 
@@ -475,7 +445,7 @@ function changeLinks(callback){
 	while(i--){
     	var oldhref = nodes[i].href;
     	var isLocal = new RegExp(thispathUnEnc).test(oldhref); 
-    	 
+    	// console.log('oldhref='+oldhref+', isLocal='+isLocal);
     	
     	if(isLocal==true){
     	// nodes[i].style.background = "#FFCC00"; //use this for debugging: local links are colored bright yellow
@@ -490,11 +460,13 @@ function changeLinks(callback){
     				}//end params    					 
     				getContent(params) 
     			});//end $(nodes[i
-    		 
+    		//console.log("i="+i+" " +oldhref + " is " + (isLocal ? "local" : "not local")+" "+nodes[i].innerHTML);
 		}//end if
 	}//end while
 	 if(callback) {callback();}
 }//end changeLinks()
+
+
 function determineParents(){ //determines what pages are parents and children for use with the the navbar styles
 	 var branch;
 	 for(var w=0; w< ps.length; w++) { 
@@ -535,6 +507,8 @@ function printFeedbackLink(){
 	var fl=("<li><a href='http://umichumhs.qualtrics.com/SE?SID=SV_1KUWIOAlDJwhgGw&SVID=Prod&URL="+encodeURI(window.location.href)+"&TITLE="+encodeURI(ms['headerTitle'])+"&EMAIL="+encodeURI(ms['contentAuthEmail'])+"' target='_blank' class='feedbackBtn'>Submit Comments or Questions</a></li>");
 	return fl;
 }//end printFeedbackLink 
+
+ 
 
 function printContentExpert(){
 	if((typeof ms.contentExpert!="undefined")&&(ms.contentExpert!="")){
@@ -717,20 +691,23 @@ function bookmarkAlert() {
 }//end bookmarkAlert
 
 function writeEndButton(txt){
-    var endText = (endText?endText:txt);      
+    var endText = (endText?endText:txt);
+   // document.getElementById('sidebar-left').innerHTML+=("<a href='#'  class='endLesson' id='endLesson' title='Mark this lesson complete' onclick='closingActions();return false;'>"+endText+"</a>");   
 	var eb=("<li><a href='#'  class='endLesson' id='endLesson' title='Mark this lesson complete' onclick='closingActions(this.id);return false;'>"+endText+"</a></li>");   
 	return eb;
 }//end writeEndButton
 
 function writeNextButton(txt){
-    var nextText = (nextText?nextText:txt);     
+    var nextText = (nextText?nextText:txt);
+  //  document.getElementById('sidebar-left').innerHTML+=("<a href='#'  class='nextLesson'  id='nextLesson' title='Mark this lesson complete' onclick='nextActions();return false;'>"+nextText+"</a>");    
     var nb=("<li><a href='#'  class='nextLesson'  id='nextLesson' title='Mark this lesson complete' onclick='nextActions(this.id);return false;'>"+nextText+"</a></li>");    
 	return nb;
 }//end writeNextButton
 
 function writeSuspendButton(txt){
-	var suspendText = (suspendText?suspendText:txt);                   
-   	var sb=("<li><a href='#' class='suspendLesson' id='suspendLesson'  title='Stop for now and come back later to finish' onclick='suspendActions(this.id);return false;'>"+suspendText+"</a></li>");                       
+    var suspendText = (suspendText?suspendText:txt);
+   // document.getElementById('sidebar-left').innerHTML+=("<li><a href='#' class='suspendLesson' id='suspendLesson'  title='Stop for now and come back later to finish' onclick='suspendActions();return false;'></li>"+suspendText+"</a>");                       
+   var sb=("<li><a href='#' class='suspendLesson' id='suspendLesson'  title='Stop for now and come back later to finish' onclick='suspendActions(this.id);return false;'>"+suspendText+"</a></li>");                       
 	return sb;
 }//end writeSuspendButton
 
@@ -775,12 +752,13 @@ function quizStart(params){
 		var quiztype = params.type;
 		var quiz = params.quiz;
 		var qindex = params.qindex;
-		var qurl = params.qurl;
+		
 		
 		switch(quiztype)
 			{
 			case "Q":
 			  if(testing){console.log('ABA quiztype='+quiztype+' quiz='+quiz+' qindex='+ qindex+', document.location.href='+document.location.href)}
+				//currentloc = document.location.href.slice(0,-1); //this slices off the /# from the end of the url
 				if( trackingmode=="scorm" && APIOK() ){
 					currentloc = document.location.href;
 					if(testing){console.log('ABA currentloc= '+currentloc)}
@@ -794,88 +772,18 @@ function quizStart(params){
 			 		
 			 		else {
 			 			 //var aznthispage = parseInt(qindex,10)
-			 			alert('You need to launch the module from your Learning Plan in order to complete the quiz. Redirecting to the next page ');
+			 			alert('SCORM is not active so quiz will not start. Now redirecting to next page. ');
 			 			nextPage(qindex);
 			 			}
 			 break;
 			case "U":
-			 	if(testing){console.log('ggg quiztype='+quiztype+' quiz='+quiz+' qindex='+ qindex+', document.location.href='+document.location.href)}
-				if(testing){console.log('ggg qurl='+qurl);}
-				//currentloc = document.location.href.slice(0,-1); //this slices off the /# from the end of the url
-				if( trackingmode=="scorm" && APIOK() ){
-					currentloc = document.location.href;
-					var qualtricsURL;
-					if(qurl.lastIndexOf('qualtricsWrap.htm?href=')!=-1){
-						qualtricsURL = qurl.slice(23);//number of chars in the string 'qualtricsWrap.htm?href='
-					}
-					else{  qualtricsURL = qurl }//in future, we will specify qualtrics href's without the qualtricsWrap piece in the pageArray
-					var n = currentloc.lastIndexOf("/");
-					currentloc = currentloc.slice(0,n);
-					currentloc = currentloc+"/qualtricsQuizWrap.htm"
-					console.log('ggg currentloc= '+currentloc);
-					var pr = currentloc +'&itm='+qindex;//need to add itm to the end of the return URL without having to alter a jillion existing quizzes.
-					var encpr = encodeURIComponent(pr);
-					console.log('pr='+pr+', encpr='+encpr);
-					qualtricsURL += '&id=' + sName + '&url=' + encpr + '&fn=' + sDetails + '&obj='+ quiz;
-    				 						
-					document.location = qualtricsURL;	
-			 		}
-			 		
-			 		else {
-			 			 //var aznthispage = parseInt(qindex,10)
-			 			alert('You need to launch the module from your Learning Plan in order to complete the quiz. Redirecting to the next page');
-			 			nextPage(qindex);
-			 			}
+			 // execute code block 2
 			  break;
 			case "I":
 			 // execute code block 2
 			  break;
 			case "C":
-			// console.log('C');
-			  break;
-			case "C6":
-				
-			// $.getScript('js/noframes/swfobject.js', function(){
-			 	// $.getScript('js/noframes/captivate6Page.js' , function(){alert('qurl='+qurl)}); 
-			 	//$('#handle').show();
-			 	//$('#leftColumn').hide();
-			 	var captivateHTML = '<div id="CaptivateContent" style="height:100%;width:100%;"></div>'+
-					'<div id="messageDiv" style="display:none;padding:24px;width:659px;margin:auto;font:18px Arial, Helvetica, sans-serif;"></div>'+
-	 				'<div id="finishedDiv" style="display:none;padding:24px;width:659px;margin:auto;font:18px Arial, Helvetica, sans-serif;">'+
-      				'This quizlet has been completed.<br />'+
-      				'<a href="javascript:nextPage();">Continue to next page of module</a></div><div id="output"></div>';
-     				$('#content').html('loading...'); 
-     				 
-     				
-     				if( trackingmode=="scorm" && APIOK() ){
-						var attr = {'wmode':'transparent','scale':'showall'}
-						var iSwf = qurl.split("=")[1].split("&")[0];
-						var iWidth = qurl.split("w=")[1].split("&")[0];
-						var iHeight = qurl.split("h=")[1].split("&")[0];;
-					
-						if($( "#dialog-captivate" ).length==0){
-							$('body').append('<div id="dialog-captivate" style="display:none; z-index: 999;"></div>');
-							}
-						$( "#dialog-captivate" ).dialog({
-							close:true,
-							height: parseFloat(iHeight)+40,
-							width: parseFloat(iWidth)+40,
-							modal: true 
-						}); 
-						$( "#dialog-captivate" ).html(captivateHTML);
-						swfobject.embedSWF(iSwf, "CaptivateContent", iWidth, iHeight, "9", "expressInstall.swf", attr, null, null );
-							 $("#dialog-captivate").dialog("option", "position", {//this is the callback function
-									my: "center",
-									at: "center",
-									of: window
-								});   	
-						 openModalDialog("#dialog-captivate");
-			 		}//end if( trackingmode=="scorm" && APIOK() ){
-			 		else {
-			 			alert('You need to launch the module from your Learning Plan in order to complete the quiz. Redirecting to the next page');
-			 		nextPage(qindex);
-			 		}
-			 
+			 // execute code block 2
 			  break;
 			default:
 			 // code to be executed if n is different from case 1 and 2
@@ -885,42 +793,6 @@ function quizStart(params){
 
 function turnOnMsg(){   $('#myModal').modal('show');} 
 function turnOffMsg(){ $('#myModal').modal('hide');}
+
 function writeHeaderTitle(){ $("#hdrTitle>h1").html( ms.headerTitle );}
 //https://github.com/julien-maurel/jQuery-Storage-API
-
-/*Captivate Functions move to another file or dynamically load*/
-function getMyData(){
-	cp = document.CaptivateContent;
-    bMax = cp.cpEIGetValue('m_VarHandle.cpQuizInfoTotalQuizPoints');
-    bScore = cp.cpEIGetValue('m_VarHandle.cpQuizInfoPointsscored');
-    aPercentScore = bMax!=0?bScore/bMax:1;//if max points are zero, then user got 100 no matter what.
-	bPercentScore = aPercentScore*100;         
-    if(testing){console.log('bMax='+bMax+', bScore'+bScore+', bPercentScore= '+ bPercentScore );}
-    //use for printing out all values from the captivate quiz          
-   // $.each(cp.cpEIGetValue('m_VarHandle'), function(name, value){
-   // 	if(testing){console.log(name + ": " + value);} //logs value of every single property of the current captivate object (long!)
-   //  }); 		 
-	if (APIOK()){	
-		qPage = currentPage;
-		var objectiveID = "C"+qPage.quiz;						 
-		var fin=1;
-		$('#content').html('One moment please...'); 
-		closeModalDialog("#dialog-captivate");		
-		MarkCap6ObjectiveDone(bScore,bMax,objectiveID);//these quizzes are considered done once you take them, no matter the score.
-		ps[znThisPage].qScore = bScore;
-		ps[znThisPage].qMax = bMax;
-		ns.localStorage.set('pageArray', ps); //store "ps" data into local storage.
-		nextPage(znThisPage);   	 
-	 }//end if (parent.APIOK())
-}
-
-//send quiz score data to the LMS for a captivate 6 quiz
-function MarkCap6ObjectiveDone(score,max,objectiveID){
- 	 if (testing){console.log("In MarkObjectiveDone: score = "+score+", max="+max+", objectiveID= "+objectiveID)}
-  	SCOSetObjectiveData(objectiveID, "status", "completed");
-	SCOSetObjectiveData(objectiveID, "score.raw", bScore);
-	SCOSetObjectiveData(objectiveID, "score.max", bMax);
-	SCOCommit();
-	} //end MarkCap6ObjectiveDone
-	 	 
-  

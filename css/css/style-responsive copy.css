@@ -1,28 +1,15 @@
-#screenmetrics{ display:none;}
-body.metrics>div#screenmetrics{  
-position:absolute;
-width:300px;right:0px;top:0px;
-display:block;
-background:#FFF;
-z-index:1000;
-color:#c000000;
-font-size:11px;
-line-height: 100%;
-}
-
 /* Higher than 1200 (desktop devices)
 ====================================================================== */
 @media (min-width: 1200px) {
 body.debug::before{ 
-	 content: "@media (min-width: 1200px)  AAA"; 
-	font-weight: bold; display: block; text-align: left; 
-	background: rgba(41,13,212, 0.9);*/ /* Semi-transparent blue*/ 
+	content: "@media (min-width: 1200px)  AAA"; 
+	font-weight: bold; display: block; text-align: center; 
+	background: rgba(41,13,212, 0.9); /* Semi-transparent blue*/ 
 	position:absolute; 
 	left:50%;right:0px;top:0px;
 	width:50%;
 	z-index: 99; 
-	color:white;
-	font-size:12px; 
+	color:white; 
 	} 
 	
 	.container-fluid-full {
@@ -81,7 +68,7 @@ body.debug::before{
 /* Higher than 960 (desktop devices)
 ====================================================================== */
 @media only screen and (min-width: 980px) and (max-width: 1199px){
-	body.debug::before{ 
+	/*body.debug::before{ 
 	content: "@media only screen and (min-width: 980px) and (max-width: 1199px)  AAB"; 
 	font-weight: bold; display: block; text-align: center; 
 	background: rgba(225,13,0, 0.9); /* Semi-transparent red*/ 
@@ -89,8 +76,8 @@ body.debug::before{
 	left:50%;right:0px;top:0px;
 	width:50%;
 	z-index: 99; 
-	color:white;  
-	} 
+	color:white; ; 
+	} */
 
 	.container-fluid-full {
 		overflow: hidden;

@@ -2604,7 +2604,7 @@ footer {
 /* Typography - Blockquote
 =================================================================== */	
 blockquote {
-	background: url(../images/img/quote.png) no-repeat 0px 10px;
+	background: url(../../images/img/quote.png) no-repeat 0px 10px;
 	font-style: italic;
 	border-left: none;
 	padding: 0 0 0 30px;

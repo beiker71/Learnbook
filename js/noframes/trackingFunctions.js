@@ -2,7 +2,7 @@
  
 	//if (typeof console == "undefined" || typeof console.log == "undefined") var console = { log: function() {} };  
 	//var testing = true;
-	var trackingmode = "xapi"; //possible values so far: scorm, xapi
+	var trackingmode = "scorm"; //possible values so far: scorm, xapi
 	var justOpened = true;	
 	var quizSetupDone = false;
 	var vrsnDone = false;
@@ -37,68 +37,14 @@ function initTracking(){ //this is called on onepage.js. never called by percept
 				
 				SCOSetStatus();//this should put a 0 score into LMS if it is scored module
 				//bookmarkAlert();
+				
 			}//if(APIOK())
 	//	}//end if(  (!ReadCookie('g_bInitDone')
 	}//end if(trackingmode=="scorm")
 	
 	if(trackingmode == "xapi"){
 		//tincan stuff
-		  var auth = 'Basic ' + Base64.encode(Config.authUser + ':' + Config.authPassword);
-        	var link = "index.htm" +
-            "?endpoint=" + encodeURIComponent(Config.endpoint) +
-            "&auth=" + encodeURIComponent(auth) +
-            "&actor=" + encodeURIComponent(JSON.stringify(Config.actor));
-
-
- var registration;
-        if (Config.registration !== undefined ) {
-          //  link = link + "&registration=" + encodeURIComponent(Config.registration);
-            registration= Config.registration;
-        }
-
-        function onLoad(){
-       //     document.getElementById("launchLink").setAttribute('href',link);
-        }
-   
-		
-		
-		var tincan = new TinCan (
-            {
-                url: window.location.href,
-               
-                activity: {
-                   // id: LearningModule.CourseActivity.id + pageArray[currentPage].url,
-                    id: LearningModule.CourseActivity.id +window.location.href,//to come: need to make this reflect current page later on after running getCurrentPage() function
-                    definition: {
-                        name: {
-                            "en-US": "Section title"
-                        },
-                        description: {
-                            "en-US": "Description of this section."
-                        }
-                        
-                    }
-                   
-                },
-                recordStores:  Config.recordStores 
-            }
-        );//var tincan = new Tin
-
-        tincan.sendStatement(
-            {
-                actor:  Config.actor,
-                verb: "experienced",
-                context: LearningModule.getContext(
-                    LearningModule.Registration,
-                    LearningModule.CourseActivity.id
-                )
-            },
-            function () {}
-        );//  tincan.sendStatement
-
-		
-		
-	}	//end if(trackingmode ==="xapi"
+	}	
 
 }//end initTracking
 
